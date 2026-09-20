@@ -1,0 +1,11 @@
+{
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node check.mjs && node curriculum.mjs && node dom.mjs"
+  },
+  "devDependencies": {
+    "jsdom": "30.0.1",
+    "@sinonjs/fake-timers": "15.4.0"
+  }
+}
