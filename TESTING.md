@@ -1,66 +1,43 @@
-# Verification — Racha 2.0, Phase 1
+# Phase 3 validation
 
-## Automated checks completed
+Tested September 24, 2026 against the top-level Phase 2 app supplied in the upload.
 
-The original core and DOM suites passed on the supplied ZIP before implementation.
-The updated suite passes on Node 24:
+## Automated checks
 
-- 4,400 generated questions across all course topics, including family,
-  introductions, and weather; valid prompts, accepted answers, and exactly one
-  correct multiple-choice option.
-- Existing scoring, lives, streaks, speed, normalization, achievements, records,
-  malformed data, and blocked browser storage checks.
-- 3,200 curriculum questions and scoped readings across all 12 units and every
-  topic; review routing verified for each member topic; five grounded reading
-  questions per story; no cross-course selections accepted.
-- Matching banks return six distinct Spanish tiles and English meanings for all
-  topics and reviews. Duplicate meanings are filtered before sampling.
-- 2,000 family question samples cover all 24 vocabulary terms. Article-free
-  Spanish answers are accepted. Family review matching stays in the family bank.
-- DOM integration completes every original game mode, including timer expiry,
-  typing, answer locks, replay, 70/100 and 100/100 scores, 86% matching accuracy,
-  sound/theme toggles, XP, and achievements.
-- New DOM integration traverses all 32 topic/unit-review selections across both
-  courses, launches Quick Play and matching, and completes every scoped story.
-  It verifies all seven game cards, course reset, retained selection on return,
-  all-course review, family Quick Play completion, and retained legacy records.
-- All local HTML assets and JavaScript imports resolve. Application assets use
-  relative paths, including under a GitHub Pages-style subdirectory.
-- `js/storage.js` is byte-for-byte unchanged. The `racha-progress-v1` key, existing
-  topic IDs, scoring logic, seven mode IDs, and entry-point paths are retained.
-- No production packages, external requests, databases, accounts, or build tools
-  were added. npm packages are used only by developer tests.
+`cd tests && npm ci && npm test`
 
-## Re-run
+- 4,400 generated-question checks, unique matching banks, answer normalization, 200 generated course-review stories, arcade scoring, preferences and storage failure behavior.
+- 3,200 additional curriculum question checks across 12 units and their topics/reviews; scoped readings and correct answer options.
+- Seeded Phase 2 expansion coverage, including added family/school/weather vocabulary, verb/pronoun content and course separation.
+- New topics expose only Match-Up. Locked later games are rejected by the progression guard.
+- Below 80% fails; exactly 80% and above pass. Checks include 8/10, 4/5, 5/6 and just-below-80 display precision.
+- A 1/1 minute round displays 100% but fails the minimum; zero answers fail; early loss of three lives fails; long feedback does not consume the minute clock.
+- Match-Up counts each Spanish pair only once for mastery even when it takes multiple attempts to finish the board.
+- Real UI game sequence completes all seven modes: Match-Up, Quick Play, Speed Round, Three Lives, minute, Streak and Story. Includes a Speed Round with arcade score below 80 but mastery exactly 80.
+- Failed replays preserve completed levels and best mastery. Direct NEXT LEVEL works without curriculum reselection.
+- Save/load and app reload retain mastery. Different topics/courses remain independent.
+- Legacy XP, records, achievements and settings survive compatible loading; old arcade scores do not grant mastery.
+- Identical replay rounds cannot repeatedly add XP. Settling one round twice cannot double-credit rewards.
+- Every one of 32 topic/unit-review paths plus both course reviews remains selectable. All matching banks load; all original topic/story content passes regression checks.
 
-From the project directory:
+## Rendered browser checks
 
-```sh
-node tests/check.mjs
-node tests/curriculum.mjs
-npm ci --prefix tests
-npm test --prefix tests
-```
+`npx playwright install chromium --only-shell && npm run test:browser`
 
-The test dependency lockfile is included. Do not upload `tests/node_modules` to
-GitHub. Tests do not load in the student application.
+Headless Chromium, viewport sizes **320×568, 390×844, 768×1024, 1366×768**:
 
-## Verification limits
+- No horizontal overflow in the guided path or question UI.
+- PLAY visible without scrolling after selection. Also checks all topic/unit-review names and both course reviews at the narrowest viewport.
+- NEXT LEVEL visible without scrolling after completing Match-Up.
+- Actual matching tile interaction, results, direct next-game entry, question feedback and leave controls.
+- Browser reload preserves the unlock. Switching to another course starts its independent path.
+- Dark and light themes. Screenshots inspected for phone and laptop layouts and mastery results.
+- Static serving from `/racha/` with relative asset URLs, no browser exceptions or failed asset requests.
 
-DOM tests use jsdom; they do not render CSS. A real Chromium check was attempted,
-but Chromium was unavailable and its download timed out. Responsive CSS was
-reviewed, but desktop/mobile screenshots, physical Dell/phone tests, real audio
-playback, and live GitHub Pages testing were not completed.
+## Scope and limitations
 
-No GitHub repository or live deployment was modified. Upload the extracted files
-to the existing publishing location to keep the same URL.
+These are automated DOM tests and Chromium viewport simulations, not tests on a physical Dell laptop, iPhone or Android device. Safari, Firefox, school-network filters and the live GitHub Pages deployment were not tested. A local static subpath test verifies compatibility; this ZIP has not been published to the user's repository.
 
-## First live smoke test
+Topic-specific readings retain the existing finite five-question banks. Retries shuffle question order and answer locations; they do not introduce new passages. Short vocabulary banks can repeat questions.
 
-1. On a Dell laptop and phone, check that course, unit, topic, and game buttons fit.
-2. Choose Spanish 1 → Family → Family vocabulary. Complete Quick Play, matching,
-   and Story Challenge. Confirm that all three use family content.
-3. Try Numbers, Dates, and Time → Mixed review; then Spanish 2 → Regular -IR Verbs.
-4. Reload the same URL. Confirm old XP, achievements, and personal records remain.
-5. Check keyboard Tab/Enter, light/dark mode, sound, and leaving an unfinished round.
-6. Inspect the console for errors. Do not clear site data while checking progress.
+Mastery and rewards persist in the same browser profile and origin. Active unfinished rounds are not saved. Blocked/full localStorage produces a warning; clearing site data erases progress. Existing scores/XP are preserved, but new mastery begins at level 1 because old arcade results do not establish accuracy.

@@ -2,10 +2,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node check.mjs && node curriculum.mjs && node dom.mjs"
+    "test": "node check.mjs && node curriculum.mjs && node expansion.mjs && node progression.mjs && node dom.mjs",
+    "test:browser": "node browser.mjs"
   },
   "devDependencies": {
+    "@sinonjs/fake-timers": "15.4.0",
     "jsdom": "30.0.1",
-    "@sinonjs/fake-timers": "15.4.0"
+    "playwright": "^1.51.1"
   }
 }

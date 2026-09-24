@@ -29,10 +29,10 @@ for(const c of [1,2]){
  }
 }
 assert.throws(()=>contentTopics(2,'family'));assert.throws(()=>contentTopics(1,'unit:s2-u1'));
-assert.equal(vocab.family.length,24);
+assert.equal(vocab.family.length,30);
 for(const [es,en] of vocab.family)assert(es&&en);
-assert.equal(new Set(vocab.family.map(r=>r[0])).size,24);
-assert.equal(new Set(vocab.family.map(r=>r[1])).size,24);
+assert.equal(new Set(vocab.family.map(r=>r[0])).size,30);
+assert.equal(new Set(vocab.family.map(r=>r[1])).size,30);
 assert(vocab.family.some(([es,en])=>es==='los padres'&&en==='parents'));
 assert(vocab.family.some(([es,en])=>es==='la prima'&&en==='female cousin'));
 const seen=new Set();
@@ -41,5 +41,5 @@ for(let i=0;i<2000;i++){
  if(q.lang==='es'){assert(isCorrect(q.answers[0].replace(/^(el|la|los|las) /,''),q));}
  for(const p of matchPairs(1,'unit:s1-u4'))assert(vocab.family.some(([es,en])=>es===p.es&&en===p.en));
 }
-assert.equal(seen.size,24);
-console.log(`PASS: ${questions} curriculum questions; all 12 units and topics; scoped readings; unique matching; 24 family terms and article-free answers; invalid course selections.`);
+assert.equal(seen.size,30);
+console.log(`PASS: ${questions} curriculum questions; all 12 units and topics; scoped readings; unique matching; 30 family terms and article-free answers; invalid course selections.`);
